@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Foot Tracing — Steps Tracker</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="app__header">
+      <div class="brand">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8.5 2C6.6 2 5 4 5 6.5c0 1.6.7 2.6 1.4 3.6.6.8 1.1 1.5 1.1 2.6 0 1.3-.5 2-1.1 2.8C5.6 16.6 5 17.7 5 19.3 5 21 6.2 22 7.8 22c1.6 0 2.3-1 2.7-1.8.4-.8.6-1.7.6-3V7.4c0-1.6-.3-2.7-.9-3.7C9.6 2.6 8.9 2 8.5 2z"/>
+            <path d="M16.2 8c-1.5 0-2.3 1-2.7 1.9-.3.7-.5 1.5-.5 2.7v5.9c0 1.7.3 2.9 1 3.9.6.9 1.4 1.6 2.8 1.6 1.7 0 3.2-1.3 3.2-3.4 0-1.3-.6-2.1-1.2-2.9-.6-.8-1.1-1.5-1.1-2.7 0-1 .4-1.7 1-2.5.7-.9 1.3-1.8 1.3-3.3C20 9.2 18.5 8 16.2 8z"/>
+          </svg>
+        </span>
+        <span class="brand-name">FOOT&nbsp;TRACING</span>
+      </div>
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle dark mode">
+        <svg class="icon icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <circle cx="12" cy="12" r="4"></circle>
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+        </svg>
+        <svg class="icon icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+    </header>
+
+    <main class="layout">
+      <section class="card map-card">
+        <div class="map-wrap">
+          <div id="map"></div>
+          <div class="map-overlay">
+            <span class="status-dot" id="status-dot"></span>
+            <span id="status-text">Locating you…</span>
+          </div>
+          <div class="map-fabs">
+            <button id="toggle-tracking" type="button" class="fab" aria-label="Pause tracking">
+              <svg class="icon icon-pause" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1"></rect><rect x="14" y="4" width="4" height="16" rx="1"></rect></svg>
+              <svg class="icon icon-play" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 21 12 6 21 6 3"></polygon></svg>
+            </button>
+            <button id="reset-tracking" type="button" class="fab fab--ghost" aria-label="Reset">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="23 4 23 10 17 10"></polyline>
+                <polyline points="1 20 1 14 7 14"></polyline>
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <div class="side-column">
+        <section class="card stats-card">
+          <div class="stat-hero">
+            <span class="stat-hero__label">Steps</span>
+            <span class="stat-hero__value" id="result-steps">0</span>
+          </div>
+          <div class="stat-row">
+            <div class="stat-chip">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+              <div class="stat-chip__text">
+                <span class="stat-chip__value" id="stat-distance">0 m</span>
+                <span class="stat-chip__label">Distance</span>
+              </div>
+            </div>
+            <div class="stat-chip">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              <div class="stat-chip__text">
+                <span class="stat-chip__value" id="stat-duration">0:00</span>
+                <span class="stat-chip__label">Duration</span>
+              </div>
+            </div>
+          </div>
+          <p class="stat-meta" id="result-meta">Start walking, or switch to “Enter distance”.</p>
+        </section>
+
+        <section class="card control-card">
+          <div class="field-group">
+            <label>Profile</label>
+            <div class="pill-group gender-toggle">
+              <button type="button" class="pill-btn pill-btn--active" data-gender="male">Male</button>
+              <button type="button" class="pill-btn" data-gender="female">Female</button>
+            </div>
+          </div>
+
+          <div class="tabs" role="tablist">
+            <span class="tabs__indicator" id="tabs-indicator" aria-hidden="true"></span>
+            <button class="tab tab--active" data-tab="live" role="tab">Live tracking</button>
+            <button class="tab" data-tab="manual" role="tab">Enter distance</button>
+          </div>
+
+          <form id="steps-form">
+            <div class="field-group" id="panel-live">
+              <p class="hint">Steps update automatically as you move — no need to enter a distance.</p>
+            </div>
+
+            <div class="field-group hidden" id="panel-manual">
+              <label for="manual-distance">Distance</label>
+              <div class="manual-row">
+                <input type="number" id="manual-distance" min="0" step="0.01" placeholder="e.g. 2.5" />
+                <div class="pill-group unit-toggle">
+                  <button type="button" class="pill-btn pill-btn--active" data-unit="km">km</button>
+                  <button type="button" class="pill-btn" data-unit="m">m</button>
+                  <button type="button" class="pill-btn" data-unit="mi">mi</button>
+                </div>
+              </div>
+              <button type="submit" class="btn btn--primary" id="submit-btn">Calculate steps</button>
+            </div>
+          </form>
+          <p id="form-error" class="form-error hidden"></p>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>
