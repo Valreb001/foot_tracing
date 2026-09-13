@@ -173,12 +173,20 @@ dependencies = [
 ]
 
 [[package]]
-name = "foot_tracing"
+name = "foot_tracing_core"
+version = "0.1.0"
+dependencies = [
+ "serde",
+]
+
+[[package]]
+name = "foot_tracing_server"
 version = "0.1.0"
 dependencies = [
  "askama",
  "askama_axum",
  "axum",
+ "foot_tracing_core",
  "serde",
  "serde_json",
  "tokio",
